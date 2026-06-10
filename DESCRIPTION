@@ -1,19 +1,38 @@
 Package: OrnAtlas
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Title: Expression Atlas for Ornamental Plant Transcriptomics
+Version: 0.1.0
+Authors@R: c(
+    person("Lashika", "Meena",
+           email = "your.email@gmail.com",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0000-0000-0000")))
+Description: A species-aware expression atlas tool for ornamental and
+    floricultural plants. Provides functions for importing RNA-seq count
+    data, building expression atlases across tissues and developmental
+    stages, differential expression analysis, and publication-quality
+    visualization. Includes native support for Rosa chinensis and
+    Chrysanthemum morifolium.
+License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Suggests: 
+Depends:
+    R (>= 4.2.0)
+Imports:
+    SummarizedExperiment,
+    S4Vectors,
+    ggplot2,
+    tidyr,
+    stats,
+    utils
+Suggests:
+    DESeq2,
+    dplyr,
+    methods,
+    testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
+    BiocStyle
 VignetteBuilder: knitr
-URL: https://github.com/lashikakarnal/OrnAtlas
-BugReports: https://github.com/lashikakarnal/OrnAtlas/issues
+biocViews: RNASeq, GeneExpression, DifferentialExpression,
+    Transcriptomics, Visualization

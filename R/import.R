@@ -1,0 +1,64 @@
+#' Import STAR count files into OrnAtlas
+#'
+#' @param file_paths Named character vector of paths to
+#'   ReadsPerGene.out.tab files. Names become sample IDs.
+#' @param col_data A data.frame with sample metadata.
+#' @param strandedness One of "reverse", "forward", "unstranded"
+#'
+#' @return A SummarizedExperiment object
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' files <- c(Stage1 = "path/to/sample1/ReadsPerGene.out.tab")
+#' importRosaCounts(files, col_data = metadata)
+#' }
+importRosaCounts <- function(file_paths,
+                             col_data,
+                             strandedness = "reverse") {
+
+  # Choose correct column based on strandedness
+  col_idx <- switch(strandedness,
+                    reverse     = 4L,
+                    forward     = 3L,
+                    unstranded  = 2L
+  )
+
+  message("Reading ", length(file_paths), " STAR count files...")
+
+  # Read each file
+  count_list <- lapply(seq_along(file_paths), function(i) {
+    fp <- file_paths[i]
+    if (!file.exists(fp))
+      stop("File not found: ", fp)
+
+    # Read STAR output - skip first 4 summary rows
+    dat <- utils::read.table(fp, header = FALSE,
+                      sep = "\t", skip = 4,
+                      stringsAsFactors = FALSE)
+    # Extract counts column
+    counts <- dat[, col_idx]
+    names(counts) <- dat[, 1]
+    counts
+  })
+
+  # Keep only genes present in all samples
+  common_genes <- Reduce(intersect, lapply(count_list, names))
+  message("Common genes across all samples: ", length(common_genes))
+
+  # Build count matrix
+  count_matrix <- do.call(cbind, lapply(count_list, function(x) x[common_genes]))
+  colnames(count_matrix) <- names(file_paths)
+  rownames(count_matrix) <- common_genes
+  storage.mode(count_matrix) <- "integer"
+
+  # Build SummarizedExperiment object
+  se <- SummarizedExperiment::SummarizedExperiment(
+    assays  = list(counts = count_matrix),
+    colData = S4Vectors::DataFrame(col_data)
+  )
+
+  message("Done! Created object with ",
+          nrow(se), " genes x ", ncol(se), " samples")
+  se
+}
