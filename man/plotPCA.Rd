@@ -4,7 +4,13 @@
 \alias{plotPCA}
 \title{PCA plot of expression data}
 \usage{
-plotPCA(se, assay_name = "counts", color_by = "stage", label_points = TRUE)
+plotPCA(
+  se,
+  assay_name = "counts",
+  color_by = "stage",
+  shape_by = NULL,
+  label_points = TRUE
+)
 }
 \arguments{
 \item{se}{A SummarizedExperiment object}
@@ -12,6 +18,8 @@ plotPCA(se, assay_name = "counts", color_by = "stage", label_points = TRUE)
 \item{assay_name}{Which assay to use}
 
 \item{color_by}{Column in colData for point color}
+
+\item{shape_by}{Column in colData for point shape}
 
 \item{label_points}{Show sample labels}
 }
@@ -23,6 +31,6 @@ PCA plot of expression data
 }
 \examples{
 \dontrun{
-plotPCA(se, color_by = "stage")
+plotPCA(se, color_by = "tissue_clean")
 }
 }

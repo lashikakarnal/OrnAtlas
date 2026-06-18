@@ -27,6 +27,7 @@ Imports:
     utils
 Suggests:
     DESeq2,
+    edgeR,
     dplyr,
     methods,
     testthat (>= 3.0.0),

@@ -62,3 +62,52 @@ importRosaCounts <- function(file_paths,
           nrow(se), " genes x ", ncol(se), " samples")
   se
 }
+#' Normalize count data
+#'
+#' @param se A SummarizedExperiment object
+#' @param method Normalization method: "CPM", "TMM", or "DESeq2_vst"
+#' @param design Optional formula for DESeq2 methods
+#'
+#' @return SummarizedExperiment with normalized assay added
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' se_norm <- normalizeCounts(se, method = "CPM")
+#' }
+normalizeCounts <- function(se,
+                            method = c("CPM", "TMM", "DESeq2_vst"),
+                            design = ~ 1) {
+
+  method     <- match.arg(method)
+  counts_mat <- SummarizedExperiment::assay(se, "counts")
+
+  norm_mat <- switch(method,
+
+                     "CPM" = {
+                       t(t(counts_mat) / (colSums(counts_mat) / 1e6))
+                     },
+
+                     "TMM" = {
+                       if (!requireNamespace("edgeR", quietly = TRUE))
+                         stop("Install edgeR: BiocManager::install('edgeR')")
+                       dge <- edgeR::DGEList(counts = counts_mat)
+                       dge <- edgeR::calcNormFactors(dge, method = "TMM")
+                       edgeR::cpm(dge, log = TRUE, prior.count = 1)
+                     },
+
+                     "DESeq2_vst" = {
+                       if (!requireNamespace("DESeq2", quietly = TRUE))
+                         stop("Install DESeq2: BiocManager::install('DESeq2')")
+                       dds <- DESeq2::DESeqDataSet(se, design = design)
+                       dds <- DESeq2::estimateSizeFactors(dds)
+                       as.matrix(SummarizedExperiment::assay(
+                         DESeq2::vst(dds, blind = TRUE)))
+                     }
+  )
+
+  SummarizedExperiment::assay(se, method) <- norm_mat
+  message("[OrnAtlas] Normalization complete: assay '",
+          method, "' added.")
+  se
+}
