@@ -37,3 +37,4 @@ Suggests:
 VignetteBuilder: knitr
 biocViews: RNASeq, GeneExpression, DifferentialExpression,
     Transcriptomics, Visualization
+LazyData: true
