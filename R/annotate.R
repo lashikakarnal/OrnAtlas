@@ -1,3 +1,5 @@
+utils::globalVariables("rosa_annotation")
+
 #' Annotate gene IDs with Rosa chinensis locus information
 #'
 #' @description
@@ -33,7 +35,7 @@ annotateGenes <- function(gene_ids,
 
   # Load built-in annotation
   ann_env <- new.env()
-  data("rosa_annotation", package = "OrnAtlas",
+  utils::data("rosa_annotation", package = "OrnAtlas",
        envir = ann_env)
   ann <- ann_env$rosa_annotation
 
@@ -108,6 +110,6 @@ annotateDEResults <- function(de_results,
 #' nrow(ann)
 getRosaAnnotation <- function() {
   ann_env <- new.env()
-  data("rosa_annotation", package = "OrnAtlas", envir = ann_env)
+  utils::data("rosa_annotation", package = "OrnAtlas", envir = ann_env)
   ann_env$rosa_annotation
 }
