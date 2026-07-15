@@ -12,9 +12,9 @@ utils::globalVariables(c("PC1", "PC2", "group"))
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' plotPCA(se, color_by = "tissue_clean")
-#' }
+#' @examples
+#' data(rosa_example)
+#' se_norm <- normalizeCounts(rosa_example, method = "CPM")
 plotPCA <- function(se,
                     assay_name   = "counts",
                     color_by     = "stage",

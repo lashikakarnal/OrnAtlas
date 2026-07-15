@@ -1,19 +1,267 @@
 ---
-title: "OrnAtlas_workflow"
-output: rmarkdown::html_vignette
+title: "OrnAtlas: Expression Atlas for Ornamental Plants"
+author: "Lashika Meena"
+date: "`r Sys.Date()`"
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    fig_width: 8
+    fig_height: 6
 vignette: >
-  %\VignetteIndexEntry{OrnAtlas_workflow}
+  %\VignetteIndexEntry{OrnAtlas: Expression Atlas for Ornamental Plants}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+  echo    = TRUE,
+  message = TRUE,
+  warning = FALSE,
+  fig.align = "center"
 )
+library(OrnAtlas)
 ```
 
-```{r setup}
+# Introduction
+
+**OrnAtlas** is the first R/Bioconductor package providing an integrated
+multi-study expression atlas and analysis toolkit specifically designed for
+ornamental and floricultural plant species.
+
+Key features:
+
+- **Universal import** — works with any plant species via `importCustomAtlas()`
+- **Built-in Rosa chinensis atlas** — 270 samples from 10+ BioProjects
+- **Built-in annotation** — 51,302 Rosa chinensis gene annotations
+- **Complete analysis pipeline** — normalize, visualize, DE analysis
+- **Publication-quality figures** — botanical color themes
+
+Currently supported species:
+
+| Species | Common name | Genome | Samples |
+|---------|------------|--------|---------|
+| *Rosa chinensis* | Rose | RchiOBHm-V2 | 270 |
+| *Tagetes erecta* | Marigold | ASM3086718v1 | 24 |
+| Any plant species | — | User-provided | User data |
+
+# Installation
+
+```{r install, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("OrnAtlas")
+```
+
+# Quick Start — Rosa chinensis
+
+## Import data
+
+The `importCustomAtlas()` function is the universal entry point.
+It accepts STAR `ReadsPerGene.out.tab` files from any plant species:
+
+```{r import, eval=FALSE}
 library(OrnAtlas)
+
+# Import Rosa chinensis expression data
+se <- importCustomAtlas(
+  counts_dir    = "path/to/star/counts/",
+  metadata_file = "path/to/SraRunTable.txt",
+  species       = "Rosa chinensis",
+  strandedness  = "reverse",
+  min_samples   = 10
+)
+se
+```
+
+For demonstration, we use the built-in example dataset:
+
+```{r example-data}
+# Load built-in example data
+example_files <- system.file("extdata", package = "OrnAtlas")
+cat("OrnAtlas installed at:", example_files, "\n")
+
+# Show built-in annotation
+ann <- getRosaAnnotation()
+cat("Rosa chinensis genes annotated:", nrow(ann), "\n")
+head(ann)
+```
+
+## Normalize expression data
+
+```{r normalize, eval=FALSE}
+# CPM normalization (fast, good for visualization)
+se_norm <- normalizeCounts(se, method = "CPM")
+
+# DESeq2 VST normalization (best for DE analysis)
+se_vst <- normalizeCounts(se, method = "DESeq2_vst",
+                           design = ~ tissue_simple)
+```
+
+## PCA visualization
+
+```{r pca, eval=FALSE}
+# PCA of all 270 samples colored by tissue type
+p <- plotPCA(se_norm,
+             assay_name   = "CPM",
+             color_by     = "tissue_simple",
+             label_points = FALSE)
+print(p)
+```
+
+The PCA reveals distinct tissue-specific transcriptional programs:
+
+- **PC1 (38.1%)** — captures petal developmental variation
+- **PC2 (12.3%)** — separates floral organ types
+- Six tissue types cluster distinctly: petal, abscission zone,
+  bud, meristem, stamen, pistil
+
+## Build expression atlas
+
+```{r atlas, eval=FALSE}
+# Aggregate replicates into condition-level atlas
+atlas <- buildAtlas(se_norm,
+                    group_var  = "tissue_simple",
+                    assay_name = "CPM")
+
+# Heatmap of top 50 variable genes
+plotAtlas(atlas,
+          top_n  = 50,
+          title  = "Rosa chinensis Expression Atlas")
+```
+
+## Differential expression analysis
+
+```{r de, eval=FALSE}
+# DE analysis: petal vs abscission zone
+results <- runDE(
+  se,
+  design        = ~ tissue_simple,
+  contrast      = c("tissue_simple", "petal", "abscission zone"),
+  alpha         = 0.05,
+  lfc_threshold = 1
+)
+
+# Summary
+cat("Upregulated in petal:", sum(results$direction == "Up"), "\n")
+cat("Downregulated in petal:", sum(results$direction == "Down"), "\n")
+
+# Volcano plot
+plotVolcano(results,
+            title = "Petal vs Abscission Zone - Rosa chinensis",
+            top_n = 20)
+```
+
+## Annotate DE results
+
+```{r annotate, eval=FALSE}
+# Add official locus names to DE results
+results_ann <- annotateDEResults(results)
+
+# View top significant genes with annotation
+top_genes <- results_ann[results_ann$significant == TRUE, ]
+top_genes <- top_genes[order(top_genes$padj), ]
+head(top_genes[, c("gene_id", "locus_name",
+                    "log2FoldChange", "padj",
+                    "direction")], 10)
+```
+
+# Universal Import — Any Plant Species
+
+The key innovation of OrnAtlas is `importCustomAtlas()` which works
+for **any plant species** with STAR-aligned RNA-seq data.
+
+## Example: Tagetes erecta (Marigold)
+
+Marigold is India's most economically important floriculture crop,
+widely used in religious ceremonies, festivals, and as a source of
+lutein for pharmaceutical production.
+
+```{r marigold, eval=FALSE}
+# Import marigold expression data
+se_marigold <- importCustomAtlas(
+  counts_dir    = "path/to/marigold/counts/",
+  metadata_file = "path/to/marigold_metadata.csv",
+  species       = "Tagetes erecta",
+  sample_col    = "Run",
+  strandedness  = "reverse",
+  min_samples   = 3
+)
+
+# Normalize
+se_mg_norm <- normalizeCounts(se_marigold, method = "CPM")
+
+# PCA colored by developmental stage and cultivar
+p_mg <- plotPCA(se_mg_norm,
+                assay_name   = "CPM",
+                color_by     = "dev_stage",
+                shape_by     = "flower_color",
+                label_points = FALSE)
+print(p_mg)
+
+# DE: orange (V-01) vs yellow mutant (V-01M) at Stage IV
+results_mg <- runDE(
+  se_marigold,
+  design        = ~ flower_color,
+  contrast      = c("flower_color", "orange", "yellow"),
+  alpha         = 0.05,
+  lfc_threshold = 1
+)
+
+plotVolcano(results_mg,
+            title = "Orange vs Yellow - Tagetes erecta Stage IV",
+            top_n = 15)
+```
+
+## Required input format
+
+OrnAtlas accepts output from the STAR aligner with
+`--quantMode GeneCounts`. Each sample generates a
+`ReadsPerGene.out.tab` file:
+
+```
+N_unmapped      1234    1234    1234
+N_multimapping  5678    5678    5678
+N_noFeature     9012    9012    9012
+N_ambiguous     3456    3456    3456
+gene1           0       0       25
+gene2           15      8       7
+gene3           234     118     116
+```
+
+The metadata CSV must have a column of sample IDs matching the
+count file names, plus any experimental variables:
+
+```
+Run,species,tissue,dev_stage,cultivar,replicate
+SRR001,Rosa chinensis,petal,Stage_I,Old_Blush,1
+SRR002,Rosa chinensis,petal,Stage_I,Old_Blush,2
+SRR003,Rosa chinensis,leaf,mature,Old_Blush,1
+```
+
+# Rosa chinensis Gene Annotation
+
+OrnAtlas includes a built-in annotation database for all 51,302
+genes in the RchiOBHm-V2 reference genome:
+
+```{r annotation}
+# Get full annotation
+ann <- getRosaAnnotation()
+cat("Total genes:", nrow(ann), "\n")
+table(ann$gene_biotype)
+```
+
+```{r annotate-genes}
+# Annotate a list of gene IDs
+my_genes <- c("gene24707", "gene47555", "gene4853",
+               "gene28236", "gene29625")
+annotateGenes(my_genes)
+```
+
+# Session Information
+
+```{r session}
+sessionInfo()
 ```

@@ -26,4 +26,5 @@ results <- runDE(se, design = ~ tissue_simple,
 results_ann <- annotateDEResults(results)
 head(results_ann[results_ann$significant, ])
 }
+ann <- annotateGenes(c("gene10715", "gene21520", "gene37167"))
 }

@@ -26,6 +26,6 @@ reference genome to official Rosa chinensis locus names and
 gene biotype information.
 }
 \examples{
-ann <- annotateGenes(c("gene24707", "gene47555", "gene4853"))
+ann <- annotateGenes(c("gene10715", "gene21520", "gene37167"))
 print(ann)
 }

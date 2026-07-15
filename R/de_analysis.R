@@ -13,11 +13,11 @@ utils::globalVariables(c("log2FoldChange", "neg_log10_p",
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' results <- runDE(se,
-#'   design   = ~ tissue_clean,
-#'   contrast = c("tissue_clean", "petal", "abscission zone"))
-#' }
+#' @examples
+#' data(rosa_example)
+#' results <- runDE(rosa_example,
+#'   design   = ~ tissue_simple,
+#'   contrast = c("tissue_simple", "petal", "abscission zone"))
 runDE <- function(se,
                   design        = ~ tissue_clean,
                   contrast      = NULL,

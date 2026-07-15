@@ -20,7 +20,6 @@ A SummarizedExperiment with atlas slot
 Build an expression atlas from count data
 }
 \examples{
-\dontrun{
-atlas <- buildAtlas(se, group_var = "stage")
-}
+data(rosa_example)
+se_norm <- normalizeCounts(rosa_example, method = "CPM")
 }

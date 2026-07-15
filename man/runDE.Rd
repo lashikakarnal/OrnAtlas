@@ -30,9 +30,8 @@ A data.frame of DE results
 Differential Expression Analysis
 }
 \examples{
-\dontrun{
-results <- runDE(se,
-  design   = ~ tissue_clean,
-  contrast = c("tissue_clean", "petal", "abscission zone"))
-}
+data(rosa_example)
+results <- runDE(rosa_example,
+  design   = ~ tissue_simple,
+  contrast = c("tissue_simple", "petal", "abscission zone"))
 }

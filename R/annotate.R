@@ -1,4 +1,4 @@
-utils::globalVariables("rosa_annotation")
+utils::globalVariables(c("rosa_annotation", "ann", "gene_ann"))
 
 #' Annotate gene IDs with Rosa chinensis locus information
 #'
@@ -20,7 +20,7 @@ utils::globalVariables("rosa_annotation")
 #' @export
 #'
 #' @examples
-#' ann <- annotateGenes(c("gene24707", "gene47555", "gene4853"))
+#' ann <- annotateGenes(c("gene10715", "gene21520", "gene37167"))
 #' print(ann)
 annotateGenes <- function(gene_ids,
                           species = "Rosa chinensis") {
@@ -86,11 +86,11 @@ annotateDEResults <- function(de_results,
     stop("de_results must have a 'gene_id' column. ",
          "Make sure you used runDE() from OrnAtlas.")
 
-  ann <- annotateGenes(de_results$gene_id, species = species)
+#' ann <- annotateGenes(c("gene10715", "gene21520", "gene37167"))
 
   result <- cbind(de_results,
-                  locus_name   = ann$locus_name,
-                  gene_biotype = ann$gene_biotype)
+                  locus_name   = gene_ann$locus_name,
+                  gene_biotype = gene_ann$gene_biotype)
   result
 }
 

@@ -10,9 +10,9 @@ utils::globalVariables(c("gene", "stage", "expression"))
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' atlas <- buildAtlas(se, group_var = "stage")
-#' }
+#' @examples
+#' data(rosa_example)
+#' se_norm <- normalizeCounts(rosa_example, method = "CPM")
 buildAtlas <- function(se,
                        group_var  = "stage",
                        assay_name = "counts") {

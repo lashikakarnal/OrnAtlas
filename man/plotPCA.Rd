@@ -30,7 +30,6 @@ A ggplot2 PCA plot
 PCA plot of expression data
 }
 \examples{
-\dontrun{
-plotPCA(se, color_by = "tissue_clean")
-}
+data(rosa_example)
+se_norm <- normalizeCounts(rosa_example, method = "CPM")
 }
