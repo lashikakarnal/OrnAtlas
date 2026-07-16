@@ -10,7 +10,7 @@ utils::globalVariables(c("gene", "stage", "expression"))
 #' @export
 #'
 #' @examples
-#' @examples
+#' library(OrnAtlas)
 #' data(rosa_example)
 #' se_norm <- normalizeCounts(rosa_example, method = "CPM")
 buildAtlas <- function(se,
@@ -32,11 +32,11 @@ buildAtlas <- function(se,
 
   # Average expression per group
   group_levels <- unique(groups)
-  atlas_mat <- sapply(group_levels, function(g) {
+  atlas_mat <- vapply(group_levels, function(g) {
     idx <- which(groups == g)
     if (length(idx) == 1) expr_mat[, idx]
     else rowMeans(expr_mat[, idx, drop = FALSE])
-  })
+  }, FUN.VALUE = numeric(nrow(expr_mat)))
   rownames(atlas_mat) <- rownames(expr_mat)
 
   # Filter lowly expressed genes
@@ -63,15 +63,18 @@ buildAtlas <- function(se,
 #'
 #' @return A ggplot2 heatmap object
 #' @export
-#'
 #' @examples
-#' \dontrun{
-#' plotAtlas(atlas, top_n = 50, title = "Rose Petal Atlas")
+#' \donttest{
+#' data(rosa_example)
+#' se_norm <- normalizeCounts(rosa_example, method = "CPM")
+#' atlas <- buildAtlas(se_norm, group_var = "tissue_simple",
+#'                     assay_name = "CPM")
+#' plotAtlas(atlas, top_n = 30, title = "Rosa chinensis Atlas")
 #' }
+
 plotAtlas <- function(atlas,
                       top_n = 50,
                       title = "Expression Atlas") {
-
   expr_mat <- SummarizedExperiment::assay(atlas, "expression")
 
   # Select top variable genes

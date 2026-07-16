@@ -12,7 +12,6 @@ utils::globalVariables(c("PC1", "PC2", "group"))
 #' @export
 #'
 #' @examples
-#' @examples
 #' data(rosa_example)
 #' se_norm <- normalizeCounts(rosa_example, method = "CPM")
 plotPCA <- function(se,

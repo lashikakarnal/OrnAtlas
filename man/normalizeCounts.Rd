@@ -20,7 +20,8 @@ SummarizedExperiment with normalized assay added
 Normalize count data
 }
 \examples{
-\dontrun{
-se_norm <- normalizeCounts(se, method = "CPM")
+\donttest{
+data(rosa_example)
+se_norm <- normalizeCounts(rosa_example, method = "CPM")
 }
 }

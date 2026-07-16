@@ -127,8 +127,7 @@ importCustomAtlas <- function(counts_dir,
     if (length(found) == 0) {
       message("[OrnAtlas] Could not auto-detect sample ID column.")
       message("[OrnAtlas] Available columns: ",
-              paste(names(meta)[1:min(10, ncol(meta))],
-                    collapse = ", "))
+              paste(names(meta)[seq_len(min(10, ncol(meta)))], collapse = ", "))
       stop("Please specify 'sample_col' argument with the column ",
            "name containing sample IDs.")
     }
@@ -173,11 +172,9 @@ importCustomAtlas <- function(counts_dir,
   if (length(common) == 0) {
     message("[OrnAtlas] ERROR: No overlap between count files and metadata!")
     message("[OrnAtlas] Count file IDs (first 5): ",
-            paste(sample_ids[1:min(5, length(sample_ids))],
-                  collapse = ", "))
+            paste(sample_ids[seq_len(min(5, length(sample_ids)))], collapse = ", "))
     message("[OrnAtlas] Metadata IDs (first 5): ",
-            paste(rownames(meta)[1:min(5, nrow(meta))],
-                  collapse = ", "))
+            paste(rownames(meta)[seq_len(min(5, nrow(meta)))], collapse = ", "))
     stop("Sample IDs in count files don't match metadata. ",
          "Check the 'sample_col' argument.")
   }

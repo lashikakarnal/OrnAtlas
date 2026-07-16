@@ -70,10 +70,10 @@ importRosaCounts <- function(file_paths,
 #'
 #' @return SummarizedExperiment with normalized assay added
 #' @export
-#'
 #' @examples
-#' \dontrun{
-#' se_norm <- normalizeCounts(se, method = "CPM")
+#' \donttest{
+#' data(rosa_example)
+#' se_norm <- normalizeCounts(rosa_example, method = "CPM")
 #' }
 normalizeCounts <- function(se,
                             method = c("CPM", "TMM", "DESeq2_vst"),

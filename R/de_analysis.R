@@ -13,7 +13,6 @@ utils::globalVariables(c("log2FoldChange", "neg_log10_p",
 #' @export
 #'
 #' @examples
-#' @examples
 #' data(rosa_example)
 #' results <- runDE(rosa_example,
 #'   design   = ~ tissue_simple,
@@ -75,7 +74,11 @@ runDE <- function(se,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' data(rosa_example)
+#' results <- runDE(rosa_example,
+#'   design   = ~ tissue_simple,
+#'   contrast = c("tissue_simple", "petal", "abscission zone"))
 #' plotVolcano(results, title = "Petal vs Abscission Zone")
 #' }
 plotVolcano <- function(de_results,
@@ -83,7 +86,6 @@ plotVolcano <- function(de_results,
                         lfc_threshold = 1,
                         top_n         = 20,
                         title         = "Volcano Plot") {
-
   df              <- de_results
   df$neg_log10_p  <- -log10(pmax(df$padj, 1e-300))
   df$color_group  <- "NS"

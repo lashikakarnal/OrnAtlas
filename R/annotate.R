@@ -73,11 +73,13 @@ annotateGenes <- function(gene_ids,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' results <- runDE(se, design = ~ tissue_simple,
+#' \donttest{
+#' data(rosa_example)
+#' results <- runDE(rosa_example,
+#'   design   = ~ tissue_simple,
 #'   contrast = c("tissue_simple", "petal", "abscission zone"))
 #' results_ann <- annotateDEResults(results)
-#' head(results_ann[results_ann$significant, ])
+#' head(results_ann[results_ann$significant == TRUE, ])
 #' }
 annotateDEResults <- function(de_results,
                               species = "Rosa chinensis") {
