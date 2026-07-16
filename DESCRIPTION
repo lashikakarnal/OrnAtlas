@@ -13,11 +13,13 @@ Description: A species-aware expression atlas tool for ornamental and
     visualization. Includes native support for Rosa chinensis and
     Chrysanthemum morifolium.
 License: GPL-3
+URL: https://github.com/lashikakarnal/OrnAtlas
+BugReports: https://github.com/lashikakarnal/OrnAtlas/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends:
-    R (>= 4.2.0)
+    R (>= 4.4.0)
 Imports:
     SummarizedExperiment,
     S4Vectors,
@@ -37,4 +39,3 @@ Suggests:
 VignetteBuilder: knitr
 biocViews: RNASeq, GeneExpression, DifferentialExpression,
     Transcriptomics, Visualization, DataImport, Annotation
-LazyData: false
