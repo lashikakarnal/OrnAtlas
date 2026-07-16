@@ -86,7 +86,7 @@ annotateDEResults <- function(de_results,
     stop("de_results must have a 'gene_id' column. ",
          "Make sure you used runDE() from OrnAtlas.")
 
-#' ann <- annotateGenes(c("gene10715", "gene21520", "gene37167"))
+  gene_ann <- annotateGenes(de_results$gene_id, species = species)
 
   result <- cbind(de_results,
                   locus_name   = gene_ann$locus_name,

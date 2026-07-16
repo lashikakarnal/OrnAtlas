@@ -1,0 +1,18 @@
+citEntry(
+  entry    = "Article",
+  title    = paste("OrnAtlas: A Universal R/Bioconductor Package",
+                   "and Curated Multi-Study Expression Atlas for",
+                   "Ornamental and Floricultural Plant Transcriptomics"),
+  author   = personList(
+    person("Lashika", "Meena")
+  ),
+  journal  = "Plant Methods",
+  year     = "2026",
+  note     = "Manuscript in preparation",
+  url      = "https://github.com/lashikakarnal/OrnAtlas",
+  textVersion = paste(
+    "Meena L (2026). OrnAtlas: A Universal R/Bioconductor Package",
+    "for Ornamental Plant Transcriptomics. Plant Methods.",
+    "https://github.com/lashikakarnal/OrnAtlas"
+  )
+)
